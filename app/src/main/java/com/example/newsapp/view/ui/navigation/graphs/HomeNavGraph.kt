@@ -38,18 +38,14 @@ fun HomeNavGraph(navController: NavHostController) {
         composable(route = BottomBarItem.Favorites.route) {
             FavoritesScreen(favoritesViewModel, navController)
         }
-        composable(route = "detail/{webTitle}/{thumbnail}/{bodyText}",
+        composable(route = "detail/{webUrl}",
             arguments = listOf(
-                navArgument("webTitle") { type = NavType.StringType },
-                navArgument("thumbnail") { type = NavType.StringType },
-                navArgument("bodyText") { type = NavType.StringType }
+                navArgument("webUrl") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val webTitle = backStackEntry.arguments?.getString("webTitle").toString()
-            val thumbnail =
-                Uri.parse(Uri.decode(backStackEntry.arguments?.getString("thumbnail"))).toString()
-            val bodyText = backStackEntry.arguments?.getString("bodyText").toString()
-            DetailScreen(webTitle, thumbnail, bodyText)
+            val webUrl =
+                Uri.parse(Uri.decode(backStackEntry.arguments?.getString("webUrl"))).toString()
+            DetailScreen(webUrl)
         }
     }
 }

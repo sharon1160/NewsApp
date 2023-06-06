@@ -40,8 +40,8 @@ fun SearchScreen(
 ) {
     val uiState by searchViewModel.uiState.collectAsState()
 
-    val navigateToDetail = { webTitle: String, thumbnail: String, bodyText: String ->
-        navController.navigate("detail/${webTitle}/${Uri.encode(thumbnail)}/${bodyText}")
+    val navigateToDetail = { webUrl: String ->
+        navController.navigate("detail/${Uri.encode(webUrl)}")
     }
 
     NewsAppTheme {
@@ -67,7 +67,7 @@ fun SearchContent(
     updateIsFavorite: (New) -> Unit,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
-    navigateToDetail: (String, String, String) -> Unit
+    navigateToDetail: (String) -> Unit
     /*
     updateDetail: (New) -> Unit,
     newsList: MutableList<New>,
@@ -178,7 +178,7 @@ fun NewsList(
     updateIsFavorite: (New) -> Unit,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
-    navigateToDetail: (String, String, String) -> Unit
+    navigateToDetail: (String) -> Unit
     /*
     updateDetail: (New) -> Unit,
     searchByNew: (String) -> Unit,
@@ -209,7 +209,7 @@ fun ListItem(
     updateIsFavorite: (New) -> Unit,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
-    navigateToDetail: (String, String, String) -> Unit
+    navigateToDetail: (String) -> Unit
     /*
     updateDetail: (New) -> Unit,
     searchByNew: (String) -> Unit,
@@ -237,7 +237,7 @@ fun ListItem(
                         )
                     }
                     .clickable {
-                        navigateToDetail(new.webTitle, new.fields.thumbnail, new.fields.bodyText)
+                        navigateToDetail(new.webUrl)
                     }
             ) {
 
@@ -346,8 +346,8 @@ fun SearchPreview() {
             insertFavorite = {},
             deleteFavorite = {},
             navigateToDetail = {
-                    webTitle: String, thumbnail: String, bodyText: String ->
-                    Log.d("TAG","$webTitle $thumbnail $bodyText")
+                    webUrl: String ->
+                    Log.d("TAG", webUrl)
             }
         )
     }

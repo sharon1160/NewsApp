@@ -41,8 +41,8 @@ import kotlin.math.absoluteValue
 fun FavoritesScreen(favoritesViewModel: FavoritesViewModel, navController: NavHostController) {
     val uiState by favoritesViewModel.uiState.collectAsState()
 
-    val navigateToDetail = { webTitle: String, thumbnail: String, bodyText: String ->
-        navController.navigate(route = "detail/${webTitle}/${Uri.encode(thumbnail)}/${bodyText}")
+    val navigateToDetail = { webUrl: String ->
+        navController.navigate(route = "detail/${Uri.encode(webUrl)}")
     }
 
     NewsAppTheme {
@@ -62,7 +62,7 @@ fun FavoritesScreen(favoritesViewModel: FavoritesViewModel, navController: NavHo
 fun FavoritesContent(
     favoritesList: List<New>,
     deleteFavorite: (New) -> Unit,
-    navigateToDetail: (String, String, String) -> Unit
+    navigateToDetail: (String) -> Unit
     /*
     searchByMovie: (String) -> Unit,
     onClickItem: () -> Job,
@@ -85,7 +85,7 @@ fun FavoritesContent(
 fun CarouselCard(
     favoritesList: List<New>,
     deleteFavorite: (New) -> Unit,
-    navigateToDetail: (String, String, String) -> Unit
+    navigateToDetail: (String) -> Unit
     /*
     searchByMovie: (String) -> Unit,
     onClickItem: () -> Job,
@@ -108,10 +108,8 @@ fun CarouselCard(
                         .height(420.dp)
                         .width(250.dp)
                         .clickable {
-                            val webTitle = favoritesList[page].webTitle
-                            val thumbnail = favoritesList[page].fields.thumbnail
-                            val bodyText = favoritesList[page].fields.bodyText
-                            navigateToDetail(webTitle,thumbnail,bodyText)
+                            val webUrl = favoritesList[page].webUrl
+                            navigateToDetail(webUrl)
                             /*
                         searchByMovie(moviesList[page].imdbID)
                         updateMovieDetail(moviesList[page])
@@ -241,8 +239,8 @@ fun FavoritesPreview() {
     NewsAppTheme {
         FavoritesContent(favoritesList = list,
             deleteFavorite = {},
-            navigateToDetail = { webTitle: String, thumbnail: String, bodyText: String ->
-                Log.d("TAG", "$webTitle $thumbnail $bodyText")
+            navigateToDetail = { webUrl: String ->
+                Log.d("TAG", webUrl)
             })
     }
 }
