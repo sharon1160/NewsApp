@@ -19,8 +19,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
 import com.example.newsapp.view.ui.theme.NewsAppTheme
 import com.example.newsapp.view.ui.theme.Roboto
@@ -291,6 +293,44 @@ fun FavoritesButton(
             imageVector = icon,
             contentDescription = "Favorite Icon",
             tint = tint
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SearchPreview() {
+    val list = mutableListOf(
+        New(
+            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
+            webTitle = "Title 1", webUrl = "", apiUrl = "",
+            fields = Fields(
+                "",
+                "",
+                "",
+                ""
+            ),
+            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+        ),
+        New(
+            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
+            webTitle = "Title 2", webUrl = "", apiUrl = "",
+            fields = Fields(
+                "",
+                "",
+                "",
+                ""
+            ),
+            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+        )
+    )
+    MaterialTheme {
+        SearchContent(
+            newsList = list,
+            searchNew = {},
+            updateIsFavorite = {},
+            insertFavorite = {},
+            deleteFavorite = {}
         )
     }
 }
