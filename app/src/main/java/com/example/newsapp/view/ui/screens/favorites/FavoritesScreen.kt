@@ -16,11 +16,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
 import com.example.newsapp.view.ui.screens.search.Message
 import com.example.newsapp.view.ui.theme.NewsAppTheme
@@ -76,7 +78,7 @@ fun CarouselCard(
     updateMovieDetail: (Movie) -> Unit*/
 ) {
     if (favoritesList.isNotEmpty()) {
-        val pagerState = rememberPagerState(initialPage = 2)
+        val pagerState = rememberPagerState(initialPage = 1)
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -179,5 +181,48 @@ fun DeleteButton(
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.fillMaxSize()
         )
+    }
+}
+
+@Preview
+@Composable
+fun FavoritesPreview() {
+    val list = mutableListOf(
+        New(
+            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
+            webTitle = "Title 1", webUrl = "", apiUrl = "",
+            fields = Fields(
+                "",
+                "",
+                "",
+                ""
+            ),
+            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+        ),
+        New(
+            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
+            webTitle = "Title 2", webUrl = "", apiUrl = "",
+            fields = Fields(
+                "",
+                "",
+                "",
+                ""
+            ),
+            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+        ),
+        New(
+            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
+            webTitle = "Title 3", webUrl = "", apiUrl = "",
+            fields = Fields(
+                "",
+                "",
+                "",
+                ""
+            ),
+            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+        )
+    )
+    MaterialTheme {
+        FavoritesContent(favoritesList = list, deleteFavorite = {})
     }
 }
