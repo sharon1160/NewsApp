@@ -13,13 +13,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.newsapp.service.model.New
 import com.example.newsapp.view.ui.theme.NewsAppTheme
+import com.example.newsapp.view.ui.theme.Roboto
 import com.example.newsapp.viewmodel.FavoritesViewModel
 import com.example.newsapp.viewmodel.SearchViewModel
 
@@ -76,13 +80,13 @@ fun SearchContent(
                 onClickItem*/
             )
         } else {
-            Message()
+            Message("Welcome! Do a search")
         }
     }
 }
 
 @Composable
-fun Message() {
+fun Message(text: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,7 +94,12 @@ fun Message() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Welcome! Do a search")
+        Text(
+            text = text,
+            fontFamily = Roboto,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Light
+        )
     }
 }
 
@@ -215,15 +224,15 @@ fun ListItem(
                         //onClickItem()
                     }
             ) {
-                /*
-                var moviePoster: String = new.poster
-                if (moviePoster == "N/A") {
-                    moviePoster =
+
+                var thumbnail: String = new.fields.thumbnail
+                if (thumbnail == "N/A") {
+                    thumbnail =
                         "https://plantillasdememes.com/img/plantillas/imagen-no-disponible01601774755.jpg"
                 }
 
                 AsyncImage(
-                    model = moviePoster,
+                    model = thumbnail,
                     contentDescription = null,
                     modifier = Modifier
                         .padding(start = 16.dp, top = 6.dp, bottom = 6.dp)
@@ -232,7 +241,7 @@ fun ListItem(
                         .clip(MaterialTheme.shapes.medium),
                     contentScale = ContentScale.Crop
                 )
-                */
+
 
                 Column(
                     modifier = Modifier
@@ -242,8 +251,9 @@ fun ListItem(
                 ) {
                     Text(
                         text = new.webTitle,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                        fontFamily = Roboto,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Light
                     )
                 }
                 FavoritesButton(
