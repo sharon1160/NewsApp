@@ -1,82 +1,42 @@
 package com.example.newsapp.view.ui.screens.detail
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.newsapp.view.ui.theme.NewsAppTheme
-import com.example.newsapp.view.ui.theme.Roboto
 
 @Composable
-fun DetailScreen(webTitle: String, thumbnail: String, bodyText: String) {
+fun DetailScreen(webUrl: String) {
     NewsAppTheme {
-        DetailContent(webTitle, thumbnail, bodyText)
+        DetailContent(webUrl)
     }
 }
 
 @Composable
-fun DetailContent(webTitle: String, thumbnail: String, bodyText: String) {
-    Surface {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f)) {
-                var thumbnailVar: String = thumbnail
-                if (thumbnailVar == "N/A") {
-                    thumbnailVar =
-                        "https://plantillasdememes.com/img/plantillas/imagen-no-disponible01601774755.jpg"
-                }
+fun DetailContent(webUrl: String) {
+    AndroidView(factory = {
+        WebView(it).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
 
-                AsyncImage(
-                    model = thumbnailVar,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(MaterialTheme.shapes.medium),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text(
-                    text = webTitle,
-                    fontFamily = Roboto,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = bodyText,
-                    fontFamily = Roboto,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Light
-                )
-            }
+            webViewClient = WebViewClient()
+            loadUrl(webUrl)
         }
-    }
+    }, update = {
+        it.loadUrl(webUrl)
+    })
 }
 
 @Preview
 @Composable
 fun DetailPreview() {
-    val webTitle = "title2"
-    val thumbnail = "thumbnail"
-    val bodyText = "bodyText"
+    val webUrl = "https://www.google.com"
     NewsAppTheme {
-        DetailContent(
-            webTitle, thumbnail, bodyText
-        )
+        DetailContent(webUrl)
     }
 }
