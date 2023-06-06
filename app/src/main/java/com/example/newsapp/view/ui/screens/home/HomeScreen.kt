@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -73,9 +74,9 @@ fun RowScope.AddItem(
         selected = currentDestination?.hierarchy?.any {
             it.route == item.route
         } == true,
-        selectedContentColor = MaterialTheme.colors.onSecondary,
-        unselectedContentColor = MaterialTheme.colors.onSecondary.copy(
-            0.3f
+        selectedContentColor = Color(0xFF4C4ECB),
+        unselectedContentColor = Color(0xFF4C4ECB).copy(
+            0.4f
         ),
         onClick = {
             navController.navigate(item.route) {
