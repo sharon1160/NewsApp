@@ -19,6 +19,7 @@ class NewsServiceImpl(private val client: HttpClient): NewsService {
                 encodedPath = "/search"
                 parameters.append("api-key", Constants.API_KEY)
                 parameters.append("q", query)
+                parameters.append("show-fields", Constants.FIELDS)
             }
         }
         val apiResponse = Json.decodeFromString<NewResponse>(response)

@@ -16,6 +16,10 @@ data class Favorite(
     @ColumnInfo(name = "webTitle") val webTitle: String,
     @ColumnInfo(name = "webUrl") val webUrl: String,
     @ColumnInfo(name = "apiUrl") val apiUrl: String,
+    @ColumnInfo(name = "headline") val headline: String,
+    @ColumnInfo(name = "trailText") val trailText: String,
+    @ColumnInfo(name = "thumbnail") val thumbnail: String,
+    @ColumnInfo(name = "bodyText") val bodyText: String,
     @ColumnInfo(name = "isHosted") val isHosted: Boolean,
     @ColumnInfo(name = "pillarId") val pillarId: String,
     @ColumnInfo(name = "pillarName") val pillarName: String

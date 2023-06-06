@@ -2,6 +2,7 @@ package com.example.newsapp.service.repository
 
 import com.example.newsapp.service.data.database.dao.FavoriteDao
 import com.example.newsapp.service.data.database.entities.Favorite
+import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
 
 class FavoritesRepository(
@@ -17,6 +18,10 @@ class FavoritesRepository(
             webTitle = new.webTitle,
             webUrl = new.webUrl,
             apiUrl = new.apiUrl,
+            headline = new.fields.headline,
+            trailText = new.fields.trailText,
+            thumbnail = new.fields.thumbnail,
+            bodyText = new.fields.bodyText,
             isHosted = new.isHosted,
             pillarId = new.pillarId,
             pillarName = new.pillarName
@@ -40,14 +45,16 @@ class FavoritesRepository(
                 webTitle = favorite.webTitle,
                 webUrl = favorite.webUrl,
                 apiUrl = favorite.apiUrl,
+                fields = Fields(
+                    headline = favorite.headline,
+                    trailText = favorite.trailText,
+                    thumbnail = favorite.thumbnail,
+                    bodyText = favorite.bodyText
+                ),
                 isHosted = favorite.isHosted,
                 pillarId = favorite.pillarId,
                 pillarName = favorite.pillarName
             )
         }
-    }
-
-    suspend fun deleteAllFavorites() {
-        favoriteDao.deleteAllFavorites()
     }
 }

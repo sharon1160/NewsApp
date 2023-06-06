@@ -11,6 +11,7 @@ data class New(
     val webTitle: String,
     val webUrl: String,
     val apiUrl: String,
+    val fields: Fields,
     val isHosted: Boolean,
     val pillarId: String,
     val pillarName: String,
