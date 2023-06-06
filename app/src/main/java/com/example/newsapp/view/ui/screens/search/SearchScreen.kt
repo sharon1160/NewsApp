@@ -1,5 +1,7 @@
 package com.example.newsapp.view.ui.screens.search
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
@@ -32,9 +35,14 @@ import com.example.newsapp.viewmodel.SearchViewModel
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel,
-    favoritesViewModel: FavoritesViewModel
+    favoritesViewModel: FavoritesViewModel,
+    navController: NavHostController
 ) {
     val uiState by searchViewModel.uiState.collectAsState()
+
+    val navigateToDetail = { webTitle: String, thumbnail: String, bodyText: String ->
+        navController.navigate("detail/${webTitle}/${Uri.encode(thumbnail)}/${bodyText}")
+    }
 
     NewsAppTheme {
         SearchContent(
@@ -43,6 +51,7 @@ fun SearchScreen(
             searchViewModel::updateIsFavorite,
             favoritesViewModel::insert,
             favoritesViewModel::delete,
+            navigateToDetail
             /*
             detailViewModel::updateDetail,
             uiState.newsList,
@@ -58,6 +67,7 @@ fun SearchContent(
     updateIsFavorite: (New) -> Unit,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
+    navigateToDetail: (String, String, String) -> Unit
     /*
     updateDetail: (New) -> Unit,
     newsList: MutableList<New>,
@@ -76,6 +86,7 @@ fun SearchContent(
                 updateIsFavorite,
                 insertFavorite,
                 deleteFavorite,
+                navigateToDetail
                 /*
                 updateDetail,
                 searchByNew,
@@ -167,6 +178,7 @@ fun NewsList(
     updateIsFavorite: (New) -> Unit,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
+    navigateToDetail: (String, String, String) -> Unit
     /*
     updateDetail: (New) -> Unit,
     searchByNew: (String) -> Unit,
@@ -180,6 +192,7 @@ fun NewsList(
                     updateIsFavorite,
                     insertFavorite,
                     deleteFavorite,
+                    navigateToDetail
                     /*
                     updateDetail,
                     searchByNew,
@@ -196,6 +209,7 @@ fun ListItem(
     updateIsFavorite: (New) -> Unit,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
+    navigateToDetail: (String, String, String) -> Unit
     /*
     updateDetail: (New) -> Unit,
     searchByNew: (String) -> Unit,
@@ -223,7 +237,7 @@ fun ListItem(
                         )
                     }
                     .clickable {
-                        //onClickItem()
+                        navigateToDetail(new.webTitle, new.fields.thumbnail, new.fields.bodyText)
                     }
             ) {
 
@@ -330,7 +344,11 @@ fun SearchPreview() {
             searchNew = {},
             updateIsFavorite = {},
             insertFavorite = {},
-            deleteFavorite = {}
+            deleteFavorite = {},
+            navigateToDetail = {
+                    webTitle: String, thumbnail: String, bodyText: String ->
+                    Log.d("TAG","$webTitle $thumbnail $bodyText")
+            }
         )
     }
 }

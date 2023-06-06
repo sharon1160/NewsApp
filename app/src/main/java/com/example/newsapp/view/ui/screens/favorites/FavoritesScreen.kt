@@ -1,5 +1,7 @@
 package com.example.newsapp.view.ui.screens.favorites
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
@@ -35,13 +38,18 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlin.math.absoluteValue
 
 @Composable
-fun FavoritesScreen(favoritesViewModel: FavoritesViewModel) {
+fun FavoritesScreen(favoritesViewModel: FavoritesViewModel, navController: NavHostController) {
     val uiState by favoritesViewModel.uiState.collectAsState()
+
+    val navigateToDetail = { webTitle: String, thumbnail: String, bodyText: String ->
+        navController.navigate(route = "detail/${webTitle}/${Uri.encode(thumbnail)}/${bodyText}")
+    }
 
     NewsAppTheme {
         FavoritesContent(
             uiState.favoritesList,
             favoritesViewModel::delete,
+            navigateToDetail,
             /*
             searchViewModel::searchByMovie,
             onClickItem,
@@ -53,7 +61,8 @@ fun FavoritesScreen(favoritesViewModel: FavoritesViewModel) {
 @Composable
 fun FavoritesContent(
     favoritesList: List<New>,
-    deleteFavorite:(New) -> Unit
+    deleteFavorite: (New) -> Unit,
+    navigateToDetail: (String, String, String) -> Unit
     /*
     searchByMovie: (String) -> Unit,
     onClickItem: () -> Job,
@@ -62,7 +71,11 @@ fun FavoritesContent(
     Column(
         modifier = Modifier.padding(top = 20.dp)
     ) {
-        CarouselCard(favoritesList, deleteFavorite, /*searchByMovie, onClickItem, updateMovieDetail*/)
+        CarouselCard(
+            favoritesList,
+            deleteFavorite,
+            navigateToDetail /*searchByMovie, onClickItem, updateMovieDetail*/
+        )
     }
 }
 
@@ -71,7 +84,8 @@ fun FavoritesContent(
 @Composable
 fun CarouselCard(
     favoritesList: List<New>,
-    deleteFavorite:(New) -> Unit
+    deleteFavorite: (New) -> Unit,
+    navigateToDetail: (String, String, String) -> Unit
     /*
     searchByMovie: (String) -> Unit,
     onClickItem: () -> Job,
@@ -94,6 +108,10 @@ fun CarouselCard(
                         .height(420.dp)
                         .width(250.dp)
                         .clickable {
+                            val webTitle = favoritesList[page].webTitle
+                            val thumbnail = favoritesList[page].fields.thumbnail
+                            val bodyText = favoritesList[page].fields.bodyText
+                            navigateToDetail(webTitle,thumbnail,bodyText)
                             /*
                         searchByMovie(moviesList[page].imdbID)
                         updateMovieDetail(moviesList[page])
@@ -165,14 +183,12 @@ fun CarouselCard(
 @Composable
 fun DeleteButton(
     new: New,
-    deleteFavorite:(New) -> Unit
+    deleteFavorite: (New) -> Unit
 ) {
     IconButton(
         modifier = Modifier.size(35.dp),
         onClick = {
             deleteFavorite(new)
-            /*deleteFavorite(new)
-            updateIsFavorite(new)*/
         }
     ) {
         Icon(
@@ -223,6 +239,10 @@ fun FavoritesPreview() {
         )
     )
     NewsAppTheme {
-        FavoritesContent(favoritesList = list, deleteFavorite = {})
+        FavoritesContent(favoritesList = list,
+            deleteFavorite = {},
+            navigateToDetail = { webTitle: String, thumbnail: String, bodyText: String ->
+                Log.d("TAG", "$webTitle $thumbnail $bodyText")
+            })
     }
 }
