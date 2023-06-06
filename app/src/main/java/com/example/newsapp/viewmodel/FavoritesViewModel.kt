@@ -18,39 +18,27 @@ class FavoritesViewModel(
 
     init {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(favoritesList = favoriteRepository.getAllFavorites())
-            }
+            updateFavorites()
         }
     }
 
     fun insert(new: New) {
         viewModelScope.launch {
             favoriteRepository.insert(new)
+            updateFavorites()
         }
     }
 
     fun delete(new: New) {
         viewModelScope.launch {
             favoriteRepository.delete(new)
+            updateFavorites()
         }
     }
 
-    fun getAllFavorites(): List<New> {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(favoritesList = favoriteRepository.getAllFavorites())
-            }
-        }
-        return uiState.value.favoritesList
-    }
-
-    fun deleteAllFavorites() {
-        viewModelScope.launch {
-            favoriteRepository.deleteAllFavorites()
-            _uiState.update {
-                it.copy(favoritesList = favoriteRepository.getAllFavorites())
-            }
+    private suspend fun updateFavorites() {
+        _uiState.update {
+            it.copy(favoritesList =  favoriteRepository.getAllFavorites() as MutableList<New>)
         }
     }
 }
