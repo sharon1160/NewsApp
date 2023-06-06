@@ -324,7 +324,7 @@ fun SearchPreview() {
             isHosted = false, pillarId = "", pillarName = "", isFavorite = false
         )
     )
-    MaterialTheme {
+    NewsAppTheme {
         SearchContent(
             newsList = list,
             searchNew = {},

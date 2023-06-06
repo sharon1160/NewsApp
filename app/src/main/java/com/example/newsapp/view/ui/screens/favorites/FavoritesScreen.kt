@@ -222,7 +222,7 @@ fun FavoritesPreview() {
             isHosted = false, pillarId = "", pillarName = "", isFavorite = false
         )
     )
-    MaterialTheme {
+    NewsAppTheme {
         FavoritesContent(favoritesList = list, deleteFavorite = {})
     }
 }
