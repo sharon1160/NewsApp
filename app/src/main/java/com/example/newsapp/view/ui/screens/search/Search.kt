@@ -20,13 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.newsapp.service.model.New
 import com.example.newsapp.view.ui.theme.NewsAppTheme
+import com.example.newsapp.viewmodel.FavoritesViewModel
 import com.example.newsapp.viewmodel.SearchViewModel
 
 @Composable
 fun SearchScreen(
-    searchViewModel: SearchViewModel
-    /*
-    favoritesViewModel: FavoritesViewModel*/
+    searchViewModel: SearchViewModel,
+    favoritesViewModel: FavoritesViewModel
 ) {
     val uiState by searchViewModel.uiState.collectAsState()
 
@@ -35,9 +35,9 @@ fun SearchScreen(
             uiState.newsList,
             searchViewModel::searchNew,
             searchViewModel::updateIsFavorite,
-            /*
             favoritesViewModel::insert,
             favoritesViewModel::delete,
+            /*
             detailViewModel::updateDetail,
             uiState.newsList,
             searchViewModel::searchById,*/
@@ -50,8 +50,9 @@ fun SearchContent(
     newsList: MutableList<New>,
     searchNew: (String) -> Unit,
     updateIsFavorite: (New) -> Unit,
-    /*insertFavorite: (New) -> Unit,
+    insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
+    /*
     updateDetail: (New) -> Unit,
     newsList: MutableList<New>,
     searchByNew: (String) -> Unit,
@@ -67,9 +68,9 @@ fun SearchContent(
             NewsList(
                 newsList,
                 updateIsFavorite,
-                /*
                 insertFavorite,
                 deleteFavorite,
+                /*
                 updateDetail,
                 searchByNew,
                 onClickItem*/
@@ -153,9 +154,9 @@ fun SearchNewBar(searchNew: (String) -> Unit) {
 fun NewsList(
     newsList: List<New> = emptyList(),
     updateIsFavorite: (New) -> Unit,
-    /*
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
+    /*
     updateDetail: (New) -> Unit,
     searchByNew: (String) -> Unit,
     onClickItem: () -> Job*/
@@ -166,9 +167,9 @@ fun NewsList(
                 ListItem(
                     new,
                     updateIsFavorite,
-                    /*
                     insertFavorite,
                     deleteFavorite,
+                    /*
                     updateDetail,
                     searchByNew,
                     onClickItem*/
@@ -182,9 +183,9 @@ fun NewsList(
 fun ListItem(
     new: New,
     updateIsFavorite: (New) -> Unit,
-    /*
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
+    /*
     updateDetail: (New) -> Unit,
     searchByNew: (String) -> Unit,
     onClickItem: () -> Job*/
@@ -248,9 +249,8 @@ fun ListItem(
                 FavoritesButton(
                     new,
                     updateIsFavorite,
-                    /*
                     insertFavorite,
-                    deleteFavorite*/
+                    deleteFavorite
                 )
             }
         }
@@ -261,19 +261,17 @@ fun ListItem(
 fun FavoritesButton(
     new: New,
     updateIsFavorite: (New) -> Unit,
-    /*
     insertFavorite: (New) -> Unit,
-    deleteFavorite: (New) -> Unit*/
+    deleteFavorite: (New) -> Unit
 ) {
     IconButton(
         modifier = Modifier.padding(end = 16.dp),
         onClick = {
-            /*
             if (!new.isFavorite) {
                 insertFavorite(new)
             } else {
                 deleteFavorite(new)
-            }*/
+            }
             updateIsFavorite(new)
         }
     ) {
