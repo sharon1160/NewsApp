@@ -8,6 +8,7 @@ import com.example.newsapp.view.ui.navigation.BottomBarItem
 import com.example.newsapp.view.ui.screens.detail.DetailScreen
 import com.example.newsapp.view.ui.screens.favorites.FavoritesScreen
 import com.example.newsapp.view.ui.screens.search.SearchScreen
+import com.example.newsapp.viewmodel.SearchViewModel
 
 @Composable
 fun HomeNavGraph(navController: NavHostController) {
@@ -17,7 +18,8 @@ fun HomeNavGraph(navController: NavHostController) {
         startDestination = BottomBarItem.Search.route
     ) {
         composable(route = BottomBarItem.Search.route) {
-            SearchScreen()
+            val searchViewModel = SearchViewModel()
+            SearchScreen(searchViewModel)
         }
         composable(route = BottomBarItem.Favorites.route) {
             FavoritesScreen()
