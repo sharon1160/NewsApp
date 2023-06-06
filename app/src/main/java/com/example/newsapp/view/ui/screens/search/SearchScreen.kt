@@ -76,7 +76,7 @@ fun SearchContent(
 ) {
     Box(
         modifier = Modifier
-            .padding(top = 15.dp, end = 2.dp, start = 2.dp)
+            .padding(top = 0.dp, end = 2.dp, start = 2.dp)
             .fillMaxSize()
     ) {
         SearchNewBar(searchNew)
