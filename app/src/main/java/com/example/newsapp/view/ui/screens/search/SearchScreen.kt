@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
@@ -24,6 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
@@ -38,41 +40,34 @@ fun SearchScreen(
     favoritesViewModel: FavoritesViewModel,
     navController: NavHostController
 ) {
-    val uiState by searchViewModel.uiState.collectAsState()
+    val paginatedNews = searchViewModel.paginatedNews.collectAsLazyPagingItems()
+    val favoritesNews by searchViewModel.favoritesNews.collectAsState()
 
     val navigateToDetail = { webUrl: String ->
         navController.navigate("detail/${Uri.encode(webUrl)}")
     }
 
     NewsAppTheme {
+        searchViewModel.loadFavorites()
         SearchContent(
-            uiState.newsList,
+            paginatedNews,
             searchViewModel::searchNew,
-            searchViewModel::updateIsFavorite,
+            favoritesNews,
             favoritesViewModel::insert,
             favoritesViewModel::delete,
             navigateToDetail
-            /*
-            detailViewModel::updateDetail,
-            uiState.newsList,
-            searchViewModel::searchById,*/
         )
     }
 }
 
 @Composable
 fun SearchContent(
-    newsList: MutableList<New>,
+    newsList: LazyPagingItems<New>?,
     searchNew: (String) -> Unit,
-    updateIsFavorite: (New) -> Unit,
+    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
-    /*
-    updateDetail: (New) -> Unit,
-    newsList: MutableList<New>,
-    searchByNew: (String) -> Unit,
-    onClickItem: () -> Job*/
 ) {
     Box(
         modifier = Modifier
@@ -80,19 +75,20 @@ fun SearchContent(
             .fillMaxSize()
     ) {
         SearchNewBar(searchNew)
-        if (newsList.isNotEmpty()) {
-            NewsList(
-                newsList,
-                updateIsFavorite,
-                insertFavorite,
-                deleteFavorite,
-                navigateToDetail
-                /*
-                updateDetail,
-                searchByNew,
-                onClickItem*/
-            )
-        } else {
+        newsList?.let {
+            if (newsList.itemCount > 0) {
+                NewsList(
+                    newsList,
+                    favoritesNews,
+                    insertFavorite,
+                    deleteFavorite,
+                    navigateToDetail
+                )
+            } else {
+                Message("Welcome! Do a search")
+            }
+        }
+        if (newsList == null) {
             Message("Welcome! Do a search")
         }
     }
@@ -174,30 +170,24 @@ fun SearchNewBar(searchNew: (String) -> Unit) {
 
 @Composable
 fun NewsList(
-    newsList: List<New> = emptyList(),
-    updateIsFavorite: (New) -> Unit,
+    newsList: LazyPagingItems<New>,
+    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
-    /*
-    updateDetail: (New) -> Unit,
-    searchByNew: (String) -> Unit,
-    onClickItem: () -> Job*/
 ) {
     Box(modifier = Modifier.padding(top = 120.dp, bottom = 50.dp)) {
         LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
-            items(items = newsList) { new ->
-                ListItem(
-                    new,
-                    updateIsFavorite,
-                    insertFavorite,
-                    deleteFavorite,
-                    navigateToDetail
-                    /*
-                    updateDetail,
-                    searchByNew,
-                    onClickItem*/
-                )
+            itemsIndexed(items = newsList) { _, new ->
+                new?.let {
+                    ListItem(
+                        it,
+                        favoritesNews,
+                        insertFavorite,
+                        deleteFavorite,
+                        navigateToDetail
+                    )
+                }
             }
         }
     }
@@ -206,14 +196,10 @@ fun NewsList(
 @Composable
 fun ListItem(
     new: New,
-    updateIsFavorite: (New) -> Unit,
+    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
-    /*
-    updateDetail: (New) -> Unit,
-    searchByNew: (String) -> Unit,
-    onClickItem: () -> Job*/
 ) {
     Surface(
         color = MaterialTheme.colorScheme.onPrimary,
@@ -274,7 +260,7 @@ fun ListItem(
                 }
                 FavoritesButton(
                     new,
-                    updateIsFavorite,
+                    favoritesNews,
                     insertFavorite,
                     deleteFavorite
                 )
@@ -286,23 +272,25 @@ fun ListItem(
 @Composable
 fun FavoritesButton(
     new: New,
-    updateIsFavorite: (New) -> Unit,
+    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit
 ) {
+    var isFavorite by remember { mutableStateOf(favoritesNews.contains(new)) }
+
     IconButton(
         modifier = Modifier.padding(end = 16.dp),
         onClick = {
-            if (!new.isFavorite) {
+            if (!isFavorite) {
                 insertFavorite(new)
             } else {
                 deleteFavorite(new)
             }
-            updateIsFavorite(new)
+            isFavorite = !isFavorite
         }
     ) {
-        val icon = if (new.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
-        val tint = if (new.isFavorite) Color.Red else Color.Gray
+        val icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+        val tint = if (isFavorite) Color.Red else Color.Gray
         Icon(
             imageVector = icon,
             contentDescription = "Favorite Icon",
@@ -310,6 +298,7 @@ fun FavoritesButton(
         )
     }
 }
+
 
 @Preview
 @Composable
@@ -340,9 +329,9 @@ fun SearchPreview() {
     )
     NewsAppTheme {
         SearchContent(
-            newsList = list,
+            newsList = null,
             searchNew = {},
-            updateIsFavorite = {},
+            favoritesNews = list,
             insertFavorite = {},
             deleteFavorite = {},
             navigateToDetail = {

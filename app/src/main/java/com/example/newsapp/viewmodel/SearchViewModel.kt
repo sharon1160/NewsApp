@@ -1,31 +1,50 @@
 package com.example.newsapp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.newsapp.service.model.New
-import com.example.newsapp.service.repository.NewsService
-import com.example.newsapp.view.ui.screens.search.SearchUiState
+import com.example.newsapp.service.repository.FavoritesRepository
+import com.example.newsapp.service.repository.NewsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(SearchUiState())
-    val uiState = _uiState.asStateFlow()
+class SearchViewModel(
+    private val newsRepository: NewsRepository,
+    private val favoriteRepository: FavoritesRepository
+) : ViewModel() {
+    // private val _uiState = MutableStateFlow(SearchUiState())
+    // val uiState = _uiState.asStateFlow()
 
-    private val client = NewsService.create()
+    private val _paginatedNews = MutableStateFlow<PagingData<New>>(PagingData.empty())
+    val paginatedNews = _paginatedNews.cachedIn(viewModelScope)
 
-    fun searchNew(query: String){
+    private val _favoritesNews = MutableStateFlow<List<New>>(emptyList())
+    val favoritesNews = _favoritesNews.asStateFlow()
+
+    fun loadFavorites() {
         CoroutineScope(Dispatchers.IO).launch {
-            val newsList = client.searchNew(query)
-            _uiState.update {
-                it.copy(newsList = newsList as MutableList<New>)
-            }
+            favoriteRepository.getAllFavorites().onEach { favoritesList ->
+                _favoritesNews.update {
+                    favoritesList
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
+    fun searchNew(query: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            newsRepository.getNews(query).onEach { paginatedNews ->
+                _paginatedNews.update {
+                    paginatedNews
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+    /*
     fun updateIsFavorite(new: New) {
         val newsList = _uiState.value.newsList
         val index: Int = newsList.indexOf(new)
@@ -35,10 +54,10 @@ class SearchViewModel : ViewModel() {
         _uiState.update {
             it.copy(newsList = updatedNewsList)
         }
-    }
-
+    }*/
+    /*
     override fun onCleared() {
         super.onCleared()
         client.closeClient()
-    }
+    }*/
 }
