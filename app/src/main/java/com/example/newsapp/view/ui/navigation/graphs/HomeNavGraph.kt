@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import androidx.room.Room
 import com.example.newsapp.service.data.database.FavoriteDatabase
 import com.example.newsapp.service.repository.FavoritesRepository
+import com.example.newsapp.service.repository.NewsRepositoryImpl
+import com.example.newsapp.service.repository.NewsService
 import com.example.newsapp.view.ui.navigation.BottomBarItem
 import com.example.newsapp.view.ui.screens.detail.DetailScreen
 import com.example.newsapp.view.ui.screens.favorites.FavoritesScreen
@@ -24,15 +26,16 @@ fun HomeNavGraph(navController: NavHostController) {
     val db =
         Room.databaseBuilder(localContext, FavoriteDatabase::class.java, "favorites_db").build()
     val dao = db.dao
-    val repository = FavoritesRepository(dao)
-    val favoritesViewModel = FavoritesViewModel(repository)
+    val favoritesRepository = FavoritesRepository(dao)
+    val favoritesViewModel = FavoritesViewModel(favoritesRepository)
     NavHost(
         navController = navController,
         route = Graph.HOME,
         startDestination = BottomBarItem.Search.route
     ) {
         composable(route = BottomBarItem.Search.route) {
-            val searchViewModel = SearchViewModel()
+            val newsRepository = NewsRepositoryImpl(NewsService.create())
+            val searchViewModel = SearchViewModel(newsRepository, favoritesRepository)
             SearchScreen(searchViewModel, favoritesViewModel, navController)
         }
         composable(route = BottomBarItem.Favorites.route) {
