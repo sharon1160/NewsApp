@@ -81,6 +81,9 @@ dependencies {
     implementation 'androidx.compose.ui:ui-util:1.2.0'
     // Coil
     implementation "io.coil-kt:coil-compose:2.3.0"
+    // Paging
+    implementation "androidx.paging:paging-runtime:3.1.1"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha17"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
