@@ -39,7 +39,7 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun FavoritesScreen(favoritesViewModel: FavoritesViewModel, navController: NavHostController) {
-    val uiState by favoritesViewModel.uiState.collectAsState()
+    val favoritesNews by favoritesViewModel.favoritesNews.collectAsState()
 
     val navigateToDetail = { webUrl: String ->
         navController.navigate(route = "detail/${Uri.encode(webUrl)}")
@@ -47,13 +47,9 @@ fun FavoritesScreen(favoritesViewModel: FavoritesViewModel, navController: NavHo
 
     NewsAppTheme {
         FavoritesContent(
-            uiState.favoritesList,
+            favoritesNews,
             favoritesViewModel::delete,
-            navigateToDetail,
-            /*
-            searchViewModel::searchByMovie,
-            onClickItem,
-            favoriteMovieViewModel::updateMovieDetail*/
+            navigateToDetail
         )
     }
 }
@@ -63,10 +59,6 @@ fun FavoritesContent(
     favoritesList: List<New>,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
-    /*
-    searchByMovie: (String) -> Unit,
-    onClickItem: () -> Job,
-    updateMovieDetail: (Movie) -> Unit*/
 ) {
     Column(
         modifier = Modifier.padding(top = 20.dp)
@@ -74,7 +66,7 @@ fun FavoritesContent(
         CarouselCard(
             favoritesList,
             deleteFavorite,
-            navigateToDetail /*searchByMovie, onClickItem, updateMovieDetail*/
+            navigateToDetail
         )
     }
 }
@@ -110,10 +102,6 @@ fun CarouselCard(
                         .clickable {
                             val webUrl = favoritesList[page].webUrl
                             navigateToDetail(webUrl)
-                            /*
-                        searchByMovie(moviesList[page].imdbID)
-                        updateMovieDetail(moviesList[page])
-                        onClickItem()*/
                         }
                         .graphicsLayer {
                             val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue

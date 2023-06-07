@@ -4,17 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.service.model.New
 import com.example.newsapp.service.repository.FavoritesRepository
-import com.example.newsapp.view.ui.screens.favorites.FavoritesUiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
     private val favoriteRepository: FavoritesRepository
 ): ViewModel() {
-    private val _uiState = MutableStateFlow(FavoritesUiState())
-    val uiState = _uiState.asStateFlow()
+
+    private val _favoritesNews = MutableStateFlow<List<New>>(emptyList())
+    val favoritesNews = _favoritesNews.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -37,8 +35,10 @@ class FavoritesViewModel(
     }
 
     private suspend fun updateFavorites() {
-        _uiState.update {
-            it.copy(favoritesList =  favoriteRepository.getAllFavorites() as MutableList<New>)
-        }
+        favoriteRepository.getAllFavorites().onEach { favoritesList ->
+            _favoritesNews.update {
+                favoritesList
+            }
+        }.launchIn(viewModelScope)
     }
 }

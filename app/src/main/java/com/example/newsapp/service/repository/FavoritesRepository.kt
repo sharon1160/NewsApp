@@ -4,6 +4,8 @@ import com.example.newsapp.service.data.database.dao.FavoriteDao
 import com.example.newsapp.service.data.database.entities.Favorite
 import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class FavoritesRepository(
     private val favoriteDao: FavoriteDao
@@ -33,9 +35,9 @@ class FavoritesRepository(
         favoriteDao.delete(new.webTitle)
     }
 
-    suspend fun getAllFavorites(): List<New> {
+    suspend fun getAllFavorites(): Flow<List<New>> {
         val entities = favoriteDao.getAllFavorites()
-        return entities.map { favorite ->
+        return flowOf(entities.map { favorite ->
             New(
                 id = favorite.idFavorite,
                 type = favorite.type,
@@ -55,6 +57,6 @@ class FavoritesRepository(
                 pillarId = favorite.pillarId,
                 pillarName = favorite.pillarName
             )
-        }
+        })
     }
 }
