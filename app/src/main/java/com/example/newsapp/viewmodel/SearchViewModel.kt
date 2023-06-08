@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.example.newsapp.service.model.New
 import com.example.newsapp.service.repository.FavoritesRepository
 import com.example.newsapp.service.repository.NewsRepository
+import com.example.newsapp.view.ui.screens.search.SearchUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -16,6 +17,8 @@ class SearchViewModel(
     private val newsRepository: NewsRepository,
     private val favoriteRepository: FavoritesRepository
 ) : ViewModel() {
+    private val _uiState = MutableStateFlow(SearchUiState())
+    val uiState = _uiState.asStateFlow()
 
     private val _paginatedNews = MutableStateFlow<PagingData<New>>(PagingData.empty())
     val paginatedNews = _paginatedNews.cachedIn(viewModelScope)
@@ -35,11 +38,20 @@ class SearchViewModel(
 
     fun searchNew(query: String, filter: String = "relevance"){
         CoroutineScope(Dispatchers.IO).launch {
-            newsRepository.getNews(query, filter).onEach { paginatedNews ->
+            newsRepository.getNews(query, filter.lowercase()).onEach { paginatedNews ->
                 _paginatedNews.update {
                     paginatedNews
                 }
             }.launchIn(viewModelScope)
+        }
+        _uiState.update {
+            it.copy(query = query)
+        }
+    }
+
+    fun updateQuery(query: String) {
+        _uiState.update {
+            it.copy(query = query)
         }
     }
 
