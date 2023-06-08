@@ -46,6 +46,7 @@ fun SearchScreen(
 ) {
     val paginatedNews = searchViewModel.paginatedNews.collectAsLazyPagingItems()
     val favoritesNews by searchViewModel.favoritesNews.collectAsState()
+    val uiState by searchViewModel.uiState.collectAsState()
 
     val navigateToDetail = { webUrl: String ->
         navController.navigate("detail/${Uri.encode(webUrl)}")
@@ -54,6 +55,8 @@ fun SearchScreen(
     NewsAppTheme {
         searchViewModel.loadFavorites()
         SearchContent(
+            uiState.query,
+            searchViewModel::updateQuery,
             paginatedNews,
             searchViewModel::saveFilter,
             searchViewModel::searchNew,
@@ -67,9 +70,11 @@ fun SearchScreen(
 
 @Composable
 fun SearchContent(
+    query: String,
+    updateQuery: (String) -> Unit,
     newsList: LazyPagingItems<New>?,
     saveFilter: (String, String) -> Unit,
-    searchNew: (String) -> Unit,
+    searchNew: (String, String) -> Unit,
     favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
@@ -80,7 +85,7 @@ fun SearchContent(
             .padding(top = 0.dp, end = 2.dp, start = 2.dp)
             .fillMaxSize()
     ) {
-        val query = SearchNewBar(searchNew)
+        SearchNewBar(searchNew, query, updateQuery)
         Filters(query, saveFilter)
         newsList?.let {
             if (newsList.itemCount > 0) {
@@ -121,22 +126,24 @@ fun Message(text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchNewBar(searchNew: (String) -> Unit): String {
-    var text by remember { mutableStateOf("") }
+fun SearchNewBar(searchNew: (String, String) -> Unit, query: String, updateQuery: (String) -> Unit) {
+    val context = LocalContext.current
+    val datastore = StoreFilters(context)
+    val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
+
     var active by remember { mutableStateOf(false) }
 
     Scaffold {
         SearchBar(
             modifier = Modifier.fillMaxWidth(),
-            query = text,
+            query = query,
             onQueryChange = {
-                text = it
+                updateQuery(it)
             },
             onSearch = {
                 if (it.isNotEmpty()) {
-                    searchNew(it)
+                    searchNew(it, savedFilter.value ?: "Relevance")
                     active = false
-                    text = ""
                 }
             },
             active = active,
@@ -160,8 +167,8 @@ fun SearchNewBar(searchNew: (String) -> Unit): String {
                 if (active) {
                     Icon(
                         modifier = Modifier.clickable {
-                            if (text.isNotEmpty()) {
-                                text = ""
+                            if (query.isNotEmpty()) {
+                                updateQuery("")
                             } else {
                                 active = false
                             }
@@ -173,7 +180,6 @@ fun SearchNewBar(searchNew: (String) -> Unit): String {
             }
         ) {}
     }
-    return text
 }
 
 @Composable
@@ -408,9 +414,11 @@ fun SearchPreview() {
     )
     NewsAppTheme {
         SearchContent(
+            query = "",
+            updateQuery = {},
             newsList = null,
             saveFilter = {_,_ -> },
-            searchNew = {},
+            searchNew = {_,_ ->},
             favoritesNews = list,
             insertFavorite = {},
             deleteFavorite = {},
