@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 
 class NewsServiceImpl(private val client: HttpClient): NewsService {
 
-    override suspend fun searchNew(query: String, page: String): List<New> {
+    override suspend fun searchNew(query: String, page: String, filter: String): List<New> {
         val response = client.get<String> {
             url {
                 protocol = URLProtocol.HTTPS
@@ -22,6 +22,7 @@ class NewsServiceImpl(private val client: HttpClient): NewsService {
                 parameters.append("show-fields", Constants.FIELDS)
                 parameters.append("page", page)
                 parameters.append("page-size", Constants.PAGE_SIZE)
+                parameters.append("order-by", filter)
             }
         }
         val apiResponse = Json.decodeFromString<NewResponse>(response)

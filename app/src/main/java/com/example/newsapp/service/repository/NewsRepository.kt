@@ -5,5 +5,5 @@ import com.example.newsapp.service.model.New
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
-    fun getNews(query: String) : Flow<PagingData<New>>
+    fun getNews(query: String, filter: String) : Flow<PagingData<New>>
 }

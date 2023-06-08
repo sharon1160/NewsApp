@@ -8,7 +8,8 @@ import com.example.newsapp.service.repository.NewsService
 class NewsPagingSource(
     private val newsService: NewsService,
     private val query: String,
-): PagingSource<Int, New>() {
+    private val filter: String
+) : PagingSource<Int, New>() {
 
     override fun getRefreshKey(state: PagingState<Int, New>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -20,7 +21,7 @@ class NewsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, New> {
         return try {
             val position = params.key ?: 1
-            val responseList = newsService.searchNew(query, position.toString())
+            val responseList = newsService.searchNew(query, position.toString(),filter)
             return LoadResult.Page(
                 data = responseList,
                 prevKey = null,

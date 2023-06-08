@@ -8,7 +8,7 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 
 interface NewsService {
-    suspend fun searchNew(query: String, page: String = "1"): List<New>
+    suspend fun searchNew(query: String, page: String = "1", filter: String): List<New>
 
     fun closeClient()
 

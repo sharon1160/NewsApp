@@ -16,8 +16,6 @@ class SearchViewModel(
     private val newsRepository: NewsRepository,
     private val favoriteRepository: FavoritesRepository
 ) : ViewModel() {
-    // private val _uiState = MutableStateFlow(SearchUiState())
-    // val uiState = _uiState.asStateFlow()
 
     private val _paginatedNews = MutableStateFlow<PagingData<New>>(PagingData.empty())
     val paginatedNews = _paginatedNews.cachedIn(viewModelScope)
@@ -35,29 +33,18 @@ class SearchViewModel(
         }
     }
 
-    fun searchNew(query: String){
+    fun searchNew(query: String, filter: String = "relevance"){
         CoroutineScope(Dispatchers.IO).launch {
-            newsRepository.getNews(query).onEach { paginatedNews ->
+            newsRepository.getNews(query, filter).onEach { paginatedNews ->
                 _paginatedNews.update {
                     paginatedNews
                 }
             }.launchIn(viewModelScope)
         }
     }
-    /*
-    fun updateIsFavorite(new: New) {
-        val newsList = _uiState.value.newsList
-        val index: Int = newsList.indexOf(new)
-        val updatedNewsList = newsList.toMutableList().apply {
-            this[index] = new.copy(isFavorite = !new.isFavorite)
-        }
-        _uiState.update {
-            it.copy(newsList = updatedNewsList)
-        }
-    }*/
-    /*
-    override fun onCleared() {
-        super.onCleared()
-        client.closeClient()
-    }*/
+
+
+    fun saveFilter(query: String, newFilter: String) {
+        searchNew(query, newFilter.lowercase())
+    }
 }

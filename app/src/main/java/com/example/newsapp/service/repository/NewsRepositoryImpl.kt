@@ -8,7 +8,7 @@ import com.example.newsapp.service.paging.NewsPagingSource
 import kotlinx.coroutines.flow.Flow
 
 class NewsRepositoryImpl(private val newsService: NewsService): NewsRepository {
-    override fun getNews(query: String): Flow<PagingData<New>> = Pager(
+    override fun getNews(query: String, filter: String): Flow<PagingData<New>> = Pager(
         initialKey = null,
         config = PagingConfig(
             pageSize = 20,
@@ -18,7 +18,8 @@ class NewsRepositoryImpl(private val newsService: NewsService): NewsRepository {
         pagingSourceFactory = {
             NewsPagingSource(
                 newsService,
-                query
+                query,
+                filter
             )
         }
     ).flow

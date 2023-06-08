@@ -2,14 +2,13 @@ package com.example.newsapp.view.ui.screens.search
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,13 +25,18 @@ import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.newsapp.service.data.datastore.StoreFilters
 import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
 import com.example.newsapp.view.ui.theme.NewsAppTheme
 import com.example.newsapp.view.ui.theme.Roboto
 import com.example.newsapp.viewmodel.FavoritesViewModel
 import com.example.newsapp.viewmodel.SearchViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -51,6 +55,7 @@ fun SearchScreen(
         searchViewModel.loadFavorites()
         SearchContent(
             paginatedNews,
+            searchViewModel::saveFilter,
             searchViewModel::searchNew,
             favoritesNews,
             favoritesViewModel::insert,
@@ -63,6 +68,7 @@ fun SearchScreen(
 @Composable
 fun SearchContent(
     newsList: LazyPagingItems<New>?,
+    saveFilter: (String, String) -> Unit,
     searchNew: (String) -> Unit,
     favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
@@ -74,7 +80,8 @@ fun SearchContent(
             .padding(top = 0.dp, end = 2.dp, start = 2.dp)
             .fillMaxSize()
     ) {
-        SearchNewBar(searchNew)
+        val query = SearchNewBar(searchNew)
+        Filters(query, saveFilter)
         newsList?.let {
             if (newsList.itemCount > 0) {
                 NewsList(
@@ -114,7 +121,7 @@ fun Message(text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchNewBar(searchNew: (String) -> Unit) {
+fun SearchNewBar(searchNew: (String) -> Unit): String {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
@@ -165,6 +172,78 @@ fun SearchNewBar(searchNew: (String) -> Unit) {
                 }
             }
         ) {}
+    }
+    return text
+}
+
+@Composable
+fun Filters(query: String, saveFilter: (String, String) -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val datastore = StoreFilters(context)
+    val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
+    val filtersList = listOf("Relevance", "Newest", "Oldest")
+    var selected = savedFilter.value ?: "Relevance"
+
+    Row(
+        modifier = Modifier
+            .padding(top = 75.dp, start = 16.dp, end = 16.dp)
+            .fillMaxWidth()
+    ) {
+        filtersList.forEach {
+            FilterChip(
+                title = it,
+                selected = selected,
+                onSelected = { filter ->
+                    selected = filter
+                    saveFilter(query, filter)
+                    scope.launch {
+                        datastore.saveDatastoreFilter(filter)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun FilterChip(title: String, selected: String, onSelected: (String) -> Unit) {
+
+    val isSelected = title == selected
+    val background =
+        if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
+    val contentColor = if (isSelected) Color.White else Color.Black
+
+    Box(modifier = Modifier
+        .padding(end = 10.dp)
+        .height(35.dp)
+        .clip(CircleShape)
+        .background(background)
+        .clickable(
+            onClick = { onSelected(title) }
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            AnimatedVisibility(visible = isSelected) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "check",
+                    tint = Color.White
+                )
+            }
+            Text(
+                text = title,
+                color = contentColor,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Light,
+                style = MaterialTheme.typography.bodySmall,
+                fontFamily = Roboto
+            )
+        }
     }
 }
 
@@ -330,13 +409,13 @@ fun SearchPreview() {
     NewsAppTheme {
         SearchContent(
             newsList = null,
+            saveFilter = {_,_ -> },
             searchNew = {},
             favoritesNews = list,
             insertFavorite = {},
             deleteFavorite = {},
-            navigateToDetail = {
-                    webUrl: String ->
-                    Log.d("TAG", webUrl)
+            navigateToDetail = { webUrl: String ->
+                Log.d("TAG", webUrl)
             }
         )
     }
