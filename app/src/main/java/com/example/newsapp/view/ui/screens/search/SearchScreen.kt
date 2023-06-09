@@ -1,7 +1,6 @@
 package com.example.newsapp.view.ui.screens.search
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,7 +57,6 @@ fun SearchScreen(
             uiState.query,
             searchViewModel::updateQuery,
             paginatedNews,
-            searchViewModel::saveFilter,
             searchViewModel::searchNew,
             favoritesNews,
             favoritesViewModel::insert,
@@ -73,7 +71,6 @@ fun SearchContent(
     query: String,
     updateQuery: (String) -> Unit,
     newsList: LazyPagingItems<New>?,
-    saveFilter: (String, String) -> Unit,
     searchNew: (String, String) -> Unit,
     favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
@@ -86,7 +83,7 @@ fun SearchContent(
             .fillMaxSize()
     ) {
         SearchNewBar(searchNew, query, updateQuery)
-        Filters(query, saveFilter)
+        Filters(query, searchNew)
         newsList?.let {
             if (newsList.itemCount > 0) {
                 NewsList(
@@ -126,7 +123,11 @@ fun Message(text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchNewBar(searchNew: (String, String) -> Unit, query: String, updateQuery: (String) -> Unit) {
+fun SearchNewBar(
+    searchNew: (String, String) -> Unit,
+    query: String,
+    updateQuery: (String) -> Unit
+) {
     val context = LocalContext.current
     val datastore = StoreFilters(context)
     val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
@@ -183,7 +184,7 @@ fun SearchNewBar(searchNew: (String, String) -> Unit, query: String, updateQuery
 }
 
 @Composable
-fun Filters(query: String, saveFilter: (String, String) -> Unit) {
+fun Filters(query: String, searchNew: (String, String) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val datastore = StoreFilters(context)
@@ -202,7 +203,9 @@ fun Filters(query: String, saveFilter: (String, String) -> Unit) {
                 selected = selected,
                 onSelected = { filter ->
                     selected = filter
-                    saveFilter(query, filter)
+                    if (query.isNotEmpty()) {
+                        searchNew(query, selected)
+                    }
                     scope.launch {
                         datastore.saveDatastoreFilter(filter)
                     }
@@ -417,14 +420,11 @@ fun SearchPreview() {
             query = "",
             updateQuery = {},
             newsList = null,
-            saveFilter = {_,_ -> },
-            searchNew = {_,_ ->},
+            searchNew = { _, _ -> },
             favoritesNews = list,
             insertFavorite = {},
             deleteFavorite = {},
-            navigateToDetail = { webUrl: String ->
-                Log.d("TAG", webUrl)
-            }
+            navigateToDetail = {}
         )
     }
 }
