@@ -1,5 +1,6 @@
 package com.example.newsapp.service.repository
 
+import android.util.Log
 import com.example.newsapp.service.model.Constants
 import com.example.newsapp.service.model.New
 import com.example.newsapp.service.model.NewResponse
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.Json
 
 class NewsServiceImpl(private val client: HttpClient): NewsService {
 
+    @kotlinx.serialization.ExperimentalSerializationApi
     override suspend fun searchNew(query: String, page: String, filter: String): List<New> {
         val response = client.get<String> {
             url {
@@ -25,8 +27,13 @@ class NewsServiceImpl(private val client: HttpClient): NewsService {
                 parameters.append("order-by", filter)
             }
         }
-        val apiResponse = Json.decodeFromString<NewResponse>(response)
-        return apiResponse.response.results
+        try {
+            val apiResponse = Json.decodeFromString<NewResponse>(response)
+            return apiResponse.response.results
+        } catch (e: Exception) {
+            Log.e("Error","$e")
+        }
+        return emptyList()
     }
 
     override fun closeClient() {
