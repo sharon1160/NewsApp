@@ -315,14 +315,8 @@ fun ListItem(
                     }
             ) {
 
-                var thumbnail: String = new.fields.thumbnail
-                if (thumbnail == "N/A") {
-                    thumbnail =
-                        "https://plantillasdememes.com/img/plantillas/imagen-no-disponible01601774755.jpg"
-                }
-
                 AsyncImage(
-                    model = thumbnail,
+                    model = new.fields.thumbnail,
                     contentDescription = null,
                     modifier = Modifier
                         .padding(start = 16.dp, top = 6.dp, bottom = 6.dp)
