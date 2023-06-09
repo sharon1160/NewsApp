@@ -54,9 +54,4 @@ class SearchViewModel(
             it.copy(query = query)
         }
     }
-
-
-    fun saveFilter(query: String, newFilter: String) {
-        searchNew(query, newFilter.lowercase())
-    }
 }
