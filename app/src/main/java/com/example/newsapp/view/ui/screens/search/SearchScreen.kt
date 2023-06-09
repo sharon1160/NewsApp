@@ -358,7 +358,7 @@ fun FavoritesButton(
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit
 ) {
-    var isFavorite by remember { mutableStateOf(favoritesNews.contains(new)) }
+    var isFavorite = favoritesNews.contains(new)
 
     IconButton(
         modifier = Modifier.padding(end = 16.dp),
@@ -371,7 +371,11 @@ fun FavoritesButton(
             isFavorite = !isFavorite
         }
     ) {
-        val icon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+        val icon = if (isFavorite) {
+            Icons.Default.Favorite
+        } else {
+            Icons.Default.FavoriteBorder
+        }
         val tint = if (isFavorite) Color.Red else Color.Gray
         Icon(
             imageVector = icon,
