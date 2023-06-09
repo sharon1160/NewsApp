@@ -21,7 +21,7 @@ class NewsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, New> {
         return try {
             val position = params.key ?: 1
-            val responseList = newsService.searchNew(query, position.toString(),filter)
+            val responseList = newsService.searchNew(query, position.toString(), filter)
             return LoadResult.Page(
                 data = responseList,
                 prevKey = null,
