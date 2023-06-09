@@ -13,7 +13,7 @@ data class New(
     val apiUrl: String,
     val fields: Fields,
     val isHosted: Boolean,
-    val pillarId: String,
-    val pillarName: String,
+    val pillarId: String = "",
+    val pillarName: String = "",
     var isFavorite: Boolean = false
 )
