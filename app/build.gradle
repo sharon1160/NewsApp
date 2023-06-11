@@ -89,6 +89,14 @@ dependencies {
     implementation "androidx.paging:paging-compose:1.0.0-alpha20"
     // Datastore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    //Koin
+    implementation "io.insert-koin:koin-core:3.4.1"
+    implementation "io.insert-koin:koin-android:3.4.1"
+    implementation "io.insert-koin:koin-android-compat:3.4.1"
+    implementation "io.insert-koin:koin-androidx-workmanager:3.4.1"
+    implementation "io.insert-koin:koin-androidx-navigation:3.4.1"
+    implementation "io.insert-koin:koin-androidx-compose:3.4.5"
+    implementation "io.insert-koin:koin-ktor:3.4.1"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
