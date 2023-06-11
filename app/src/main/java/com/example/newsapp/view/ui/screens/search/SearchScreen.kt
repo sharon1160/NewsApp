@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.newsapp.service.data.datastore.StoreFilters
-import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
 import com.example.newsapp.view.ui.theme.NewsAppTheme
 import com.example.newsapp.view.ui.theme.Roboto
@@ -43,8 +42,7 @@ fun SearchScreen(
     favoritesViewModel: FavoritesViewModel,
     navController: NavHostController
 ) {
-    val paginatedNews = searchViewModel.paginatedNews.collectAsLazyPagingItems()
-    val favoritesNews by searchViewModel.favoritesNews.collectAsState()
+    val resultedList = searchViewModel.resultedList.collectAsLazyPagingItems()
     val uiState by searchViewModel.uiState.collectAsState()
 
     val navigateToDetail = { webUrl: String ->
@@ -52,13 +50,11 @@ fun SearchScreen(
     }
 
     NewsAppTheme {
-        searchViewModel.loadFavorites()
         SearchContent(
             uiState.query,
             searchViewModel::updateQuery,
-            paginatedNews,
+            resultedList,
             searchViewModel::searchNew,
-            favoritesNews,
             favoritesViewModel::insert,
             favoritesViewModel::delete,
             navigateToDetail
@@ -72,7 +68,6 @@ fun SearchContent(
     updateQuery: (String) -> Unit,
     newsList: LazyPagingItems<New>?,
     searchNew: (String, String) -> Unit,
-    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
@@ -88,7 +83,6 @@ fun SearchContent(
             if (newsList.itemCount > 0) {
                 NewsList(
                     newsList,
-                    favoritesNews,
                     insertFavorite,
                     deleteFavorite,
                     navigateToDetail
@@ -259,7 +253,6 @@ fun FilterChip(title: String, selected: String, onSelected: (String) -> Unit) {
 @Composable
 fun NewsList(
     newsList: LazyPagingItems<New>,
-    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
@@ -270,7 +263,6 @@ fun NewsList(
                 new?.let {
                     ListItem(
                         it,
-                        favoritesNews,
                         insertFavorite,
                         deleteFavorite,
                         navigateToDetail
@@ -284,7 +276,6 @@ fun NewsList(
 @Composable
 fun ListItem(
     new: New,
-    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
@@ -342,7 +333,6 @@ fun ListItem(
                 }
                 FavoritesButton(
                     new,
-                    favoritesNews,
                     insertFavorite,
                     deleteFavorite
                 )
@@ -354,11 +344,10 @@ fun ListItem(
 @Composable
 fun FavoritesButton(
     new: New,
-    favoritesNews: List<New>,
     insertFavorite: (New) -> Unit,
     deleteFavorite: (New) -> Unit
 ) {
-    var isFavorite = favoritesNews.contains(new)
+    var isFavorite = new.isFavorite
 
     IconButton(
         modifier = Modifier.padding(end = 16.dp),
@@ -389,37 +378,12 @@ fun FavoritesButton(
 @Preview
 @Composable
 fun SearchPreview() {
-    val list = mutableListOf(
-        New(
-            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
-            webTitle = "Title 1", webUrl = "", apiUrl = "",
-            fields = Fields(
-                "",
-                "",
-                "",
-                ""
-            ),
-            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
-        ),
-        New(
-            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
-            webTitle = "Title 2", webUrl = "", apiUrl = "",
-            fields = Fields(
-                "",
-                "",
-                "",
-                ""
-            ),
-            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
-        )
-    )
     NewsAppTheme {
         SearchContent(
             query = "",
             updateQuery = {},
             newsList = null,
             searchNew = { _, _ -> },
-            favoritesNews = list,
             insertFavorite = {},
             deleteFavorite = {},
             navigateToDetail = {}
