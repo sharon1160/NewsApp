@@ -35,11 +35,12 @@ import com.example.newsapp.view.ui.theme.Roboto
 import com.example.newsapp.viewmodel.FavoritesViewModel
 import com.example.newsapp.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SearchScreen(
-    searchViewModel: SearchViewModel,
-    favoritesViewModel: FavoritesViewModel,
+    searchViewModel: SearchViewModel = koinViewModel(),
+    favoritesViewModel: FavoritesViewModel = koinViewModel(),
     navController: NavHostController
 ) {
     val resultedList = searchViewModel.resultedList.collectAsLazyPagingItems()

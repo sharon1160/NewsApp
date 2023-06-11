@@ -35,10 +35,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.absoluteValue
 
 @Composable
-fun FavoritesScreen(favoritesViewModel: FavoritesViewModel, navController: NavHostController) {
+fun FavoritesScreen(
+    favoritesViewModel: FavoritesViewModel = koinViewModel(),
+    navController: NavHostController
+) {
     val favoritesNews by favoritesViewModel.favoritesNews.collectAsState()
 
     val navigateToDetail = { webUrl: String ->
