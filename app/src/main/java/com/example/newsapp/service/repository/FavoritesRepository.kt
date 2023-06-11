@@ -5,7 +5,7 @@ import com.example.newsapp.service.data.database.entities.Favorite
 import com.example.newsapp.service.model.Fields
 import com.example.newsapp.service.model.New
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class FavoritesRepository(
     private val favoriteDao: FavoriteDao
@@ -35,28 +35,30 @@ class FavoritesRepository(
         favoriteDao.delete(new.webTitle)
     }
 
-    suspend fun getAllFavorites(): Flow<List<New>> {
+    fun getAllFavorites(): Flow<List<New>> {
         val entities = favoriteDao.getAllFavorites()
-        return flowOf(entities.map { favorite ->
-            New(
-                id = favorite.idFavorite,
-                type = favorite.type,
-                sectionId = favorite.sectionId,
-                sectionName = favorite.sectionName,
-                webPublicationDate = favorite.webPublicationDate,
-                webTitle = favorite.webTitle,
-                webUrl = favorite.webUrl,
-                apiUrl = favorite.apiUrl,
-                fields = Fields(
-                    headline = favorite.headline,
-                    trailText = favorite.trailText,
-                    thumbnail = favorite.thumbnail,
-                    bodyText = favorite.bodyText
-                ),
-                isHosted = favorite.isHosted,
-                pillarId = favorite.pillarId,
-                pillarName = favorite.pillarName
-            )
-        })
+        return entities.map { list ->
+            list.map {favorite ->
+                New(
+                    id = favorite.idFavorite,
+                    type = favorite.type,
+                    sectionId = favorite.sectionId,
+                    sectionName = favorite.sectionName,
+                    webPublicationDate = favorite.webPublicationDate,
+                    webTitle = favorite.webTitle,
+                    webUrl = favorite.webUrl,
+                    apiUrl = favorite.apiUrl,
+                    fields = Fields(
+                        headline = favorite.headline,
+                        trailText = favorite.trailText,
+                        thumbnail = favorite.thumbnail,
+                        bodyText = favorite.bodyText
+                    ),
+                    isHosted = favorite.isHosted,
+                    pillarId = favorite.pillarId,
+                    pillarName = favorite.pillarName
+                )
+            }
+        }
     }
 }
