@@ -1,5 +1,7 @@
 package com.example.newsapp.service.repository
 
+import android.content.Context
+import com.example.newsapp.service.data.database.FavoriteDatabase
 import com.example.newsapp.service.data.database.dao.FavoriteDao
 import com.example.newsapp.service.data.database.entities.Favorite
 import com.example.newsapp.service.model.Fields
@@ -8,8 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class FavoritesRepository(
-    private val favoriteDao: FavoriteDao
+    context: Context
 ) {
+    private val favoriteDao: FavoriteDao = FavoriteDatabase.getFavoriteDatabase(context).dao
     suspend fun insert(new: New) {
         val entity = Favorite(
             idFavorite = new.id,
