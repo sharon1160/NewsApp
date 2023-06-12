@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">NewsApp</string>
+    <string name="sample_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</string>
+    <string name="empty_text"> </string>
+    <string name="delete_content_description">Delete Icon</string>
+    <string name="no_favorites_message">No favorites</string>
+    <string name="detail_base_path">detail/</string>
+    <string name="web_example">https://www.google.com</string>
+    <string name="favorite_icon_content_description">Favorite Icon</string>
+    <string name="welcome_message">Welcome! Do a search</string>
+    <string name="default_filter">Relevance</string>
+    <string name="search_placeholder">Search</string>
+    <string name="search_content_description">Search icon</string>
+    <string name="close_icon_content_description">Close icon</string>
+    <string name="newest_filter">Newest</string>
+    <string name="oldest_filter">Oldest</string>
+    <string name="check_icon_content_decription">check</string>
+    <string name="bottom_navigation_content_description">Bottom Navigation Icon</string>
 </resources>
