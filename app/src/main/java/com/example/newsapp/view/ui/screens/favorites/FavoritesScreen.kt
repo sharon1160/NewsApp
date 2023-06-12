@@ -82,10 +82,6 @@ fun CarouselCard(
     favoritesList: List<New>,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
-    /*
-    searchByMovie: (String) -> Unit,
-    onClickItem: () -> Job,
-    updateMovieDetail: (Movie) -> Unit*/
 ) {
     if (favoritesList.isNotEmpty()) {
         val pagerState = rememberPagerState(initialPage = 1)
