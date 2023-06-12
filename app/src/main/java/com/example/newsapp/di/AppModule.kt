@@ -1,4 +1,4 @@
-package com.example.newsapp
+package com.example.newsapp.di
 
 import com.example.newsapp.data.datastore.StoreFilters
 import com.example.newsapp.data.repository.*

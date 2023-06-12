@@ -1,8 +1,6 @@
 package com.example.newsapp.data.repository
 
 import android.util.Log
-import com.example.newsapp.data.model.Constants
-import com.example.newsapp.data.model.Constants.BASE_URL
 import com.example.newsapp.data.model.New
 import com.example.newsapp.data.model.NewResponse
 import io.ktor.client.*
@@ -31,11 +29,11 @@ class NewsServiceImpl: NewsService {
     override suspend fun searchNew(query: String, page: String, filter: String): List<New> {
         val response: HttpResponse = client.get(BASE_URL) {
             url {
-                parameters.append("api-key", Constants.API_KEY)
+                parameters.append("api-key", API_KEY)
                 parameters.append("q", query)
-                parameters.append("show-fields", Constants.FIELDS)
+                parameters.append("show-fields", FIELDS)
                 parameters.append("page", page)
-                parameters.append("page-size", Constants.PAGE_SIZE)
+                parameters.append("page-size", PAGE_SIZE)
                 parameters.append("order-by", filter)
             }
         }
@@ -49,5 +47,12 @@ class NewsServiceImpl: NewsService {
 
     override fun closeClient() {
         client.close()
+    }
+
+    companion object {
+        const val BASE_URL = "https://content.guardianapis.com/search"
+        const val API_KEY = "17659ee4-960a-487d-aa50-d45bcb2304f7"
+        const val FIELDS =  "headline,trailText,thumbnail,bodyText"
+        const val PAGE_SIZE = "20"
     }
 }

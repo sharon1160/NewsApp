@@ -8,17 +8,24 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.newsapp.R
 import com.example.newsapp.ui.navigation.BottomBarItem
 import com.example.newsapp.ui.navigation.graphs.HomeNavGraph
 
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
+    HomeScreenContent(navController)
+}
+
+@Composable
+fun HomeScreenContent(navController: NavHostController) {
     Scaffold(
         bottomBar = { BottomBar(navController = navController) }
     ) {
@@ -68,7 +75,7 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 imageVector = item.icon,
-                contentDescription = "Bottom Navigation Icon"
+                contentDescription = stringResource(R.string.bottom_navigation_content_description)
             )
         },
         selected = currentDestination?.hierarchy?.any {

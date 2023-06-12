@@ -8,7 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.newsapp.appModule
+import com.example.newsapp.di.appModule
 import com.example.newsapp.ui.navigation.graphs.RootNavigationGraph
 import com.example.newsapp.ui.theme.NewsAppTheme
 import org.koin.android.ext.koin.androidContext

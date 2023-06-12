@@ -4,19 +4,21 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.newsapp.R
 import com.example.newsapp.ui.theme.NewsAppTheme
 
 @Composable
 fun DetailScreen(webUrl: String) {
     NewsAppTheme {
-        DetailContent(webUrl)
+        DetailScreenContent(webUrl)
     }
 }
 
 @Composable
-fun DetailContent(webUrl: String) {
+fun DetailScreenContent(webUrl: String) {
     AndroidView(factory = {
         WebView(it).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -34,9 +36,9 @@ fun DetailContent(webUrl: String) {
 
 @Preview
 @Composable
-fun DetailPreview() {
-    val webUrl = "https://www.google.com"
+fun DetailScreenPreview() {
+    val webUrl = stringResource(R.string.web_example)
     NewsAppTheme {
-        DetailContent(webUrl)
+        DetailScreenContent(webUrl)
     }
 }

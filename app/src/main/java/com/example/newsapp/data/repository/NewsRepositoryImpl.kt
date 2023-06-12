@@ -11,7 +11,7 @@ class NewsRepositoryImpl(private val newsService: NewsService): NewsRepository {
     override fun getNews(query: String, filter: String): Flow<PagingData<New>> = Pager(
         initialKey = null,
         config = PagingConfig(
-            pageSize = 20,
+            pageSize = PAGE_SIZE,
             enablePlaceholders = false,
             prefetchDistance = 1
         ),
@@ -23,4 +23,8 @@ class NewsRepositoryImpl(private val newsService: NewsService): NewsRepository {
             )
         }
     ).flow
+
+    companion object {
+        const val PAGE_SIZE = 20
+    }
 }

@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import com.example.newsapp.ui.navigation.BottomBarItem
 import com.example.newsapp.ui.detail.DetailScreen
 import com.example.newsapp.ui.favorites.FavoritesScreen
-import com.example.newsapp.view.ui.screens.search.SearchScreen
+import com.example.newsapp.ui.search.SearchScreen
 
 @Composable
 fun HomeNavGraph(navController: NavHostController) {

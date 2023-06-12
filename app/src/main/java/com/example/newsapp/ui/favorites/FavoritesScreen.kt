@@ -1,8 +1,6 @@
 package com.example.newsapp.ui.favorites
 
 import android.net.Uri
-import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,9 +24,10 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.newsapp.R
 import com.example.newsapp.data.model.Fields
 import com.example.newsapp.data.model.New
-import com.example.newsapp.view.ui.screens.search.Message
+import com.example.newsapp.ui.search.Message
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.ui.theme.Roboto
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -43,13 +43,14 @@ fun FavoritesScreen(
     navController: NavHostController
 ) {
     val favoritesNews by favoritesViewModel.favoritesNews.collectAsState()
+    val detailBasePath = stringResource(R.string.detail_base_path)
 
     val navigateToDetail = { webUrl: String ->
-        navController.navigate(route = "detail/${Uri.encode(webUrl)}")
+        navController.navigate(route = "${detailBasePath}${Uri.encode(webUrl)}")
     }
 
     NewsAppTheme {
-        FavoritesContent(
+        FavoritesScreenContent(
             favoritesNews,
             favoritesViewModel::delete,
             navigateToDetail
@@ -58,7 +59,7 @@ fun FavoritesScreen(
 }
 
 @Composable
-fun FavoritesContent(
+fun FavoritesScreenContent(
     favoritesList: List<New>,
     deleteFavorite: (New) -> Unit,
     navigateToDetail: (String) -> Unit
@@ -75,7 +76,7 @@ fun FavoritesContent(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun CarouselCard(
     favoritesList: List<New>,
@@ -161,7 +162,7 @@ fun CarouselCard(
             }
         }
     } else {
-        Message("No favorites")
+        Message(stringResource(R.string.no_favorites_message))
     }
 }
 
@@ -178,7 +179,7 @@ fun DeleteButton(
     ) {
         Icon(
             imageVector = Icons.Default.Delete,
-            contentDescription = "Delete Icon",
+            contentDescription = stringResource(R.string.delete_content_description),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.fillMaxSize()
         )
@@ -187,47 +188,76 @@ fun DeleteButton(
 
 @Preview
 @Composable
-fun FavoritesPreview() {
+fun FavoritesScreenPreview() {
+    val emptyText = stringResource(R.string.empty_text)
+    val sampleText = stringResource(R.string.sample_text)
     val list = mutableListOf(
         New(
-            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
-            webTitle = "Title 1", webUrl = "", apiUrl = "",
+            id = emptyText,
+            type = emptyText,
+            sectionId = emptyText,
+            sectionName = emptyText,
+            webPublicationDate = emptyText,
+            webTitle = sampleText,
+            webUrl = emptyText,
+            apiUrl = emptyText,
             fields = Fields(
-                "",
-                "",
-                "",
-                ""
+                emptyText,
+                emptyText,
+                emptyText,
+                emptyText
             ),
-            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+            isHosted = false,
+            pillarId = emptyText,
+            pillarName = emptyText,
+            isFavorite = false
         ),
         New(
-            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
-            webTitle = "Title 2", webUrl = "", apiUrl = "",
+            id = emptyText,
+            type = emptyText,
+            sectionId = emptyText,
+            sectionName = emptyText,
+            webPublicationDate = emptyText,
+            webTitle = sampleText,
+            webUrl = emptyText,
+            apiUrl = emptyText,
             fields = Fields(
-                "",
-                "",
-                "",
-                ""
+                emptyText,
+                emptyText,
+                emptyText,
+                emptyText
             ),
-            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+            isHosted = false,
+            pillarId = emptyText,
+            pillarName = emptyText,
+            isFavorite = false
         ),
         New(
-            id = "", type = "", sectionId = "", sectionName = "", webPublicationDate = "",
-            webTitle = "Title 3", webUrl = "", apiUrl = "",
+            id = emptyText,
+            type = emptyText,
+            sectionId = emptyText,
+            sectionName = emptyText,
+            webPublicationDate = emptyText,
+            webTitle = sampleText,
+            webUrl = emptyText,
+            apiUrl = emptyText,
             fields = Fields(
-                "",
-                "",
-                "",
-                ""
+                emptyText,
+                emptyText,
+                emptyText,
+                emptyText
             ),
-            isHosted = false, pillarId = "", pillarName = "", isFavorite = false
+            isHosted = false,
+            pillarId = emptyText,
+            pillarName = emptyText,
+            isFavorite = false
         )
     )
     NewsAppTheme {
-        FavoritesContent(favoritesList = list,
+        FavoritesScreenContent(
+            favoritesList = list,
             deleteFavorite = {},
-            navigateToDetail = { webUrl: String ->
-                Log.d("TAG", webUrl)
-            })
+            navigateToDetail = {}
+        )
     }
 }

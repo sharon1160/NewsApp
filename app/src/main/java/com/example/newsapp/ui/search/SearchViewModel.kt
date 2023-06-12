@@ -34,7 +34,7 @@ class SearchViewModel(
         }
     }
 
-    fun searchNew(query: String, filter: String = "relevance") {
+    fun searchNew(query: String, filter: String = DEFAULT_FILTER) {
         newsRepository.getNews(query, filter.lowercase()).onEach { paginatedNews ->
             _paginatedNews.update {
                 paginatedNews
@@ -49,5 +49,9 @@ class SearchViewModel(
         _uiState.update {
             it.copy(query = query)
         }
+    }
+
+    companion object {
+        const val DEFAULT_FILTER = "Relevance"
     }
 }

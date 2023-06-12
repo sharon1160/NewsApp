@@ -11,8 +11,9 @@ import com.example.newsapp.data.database.entities.Favorite
 abstract class FavoriteDatabase: RoomDatabase() {
     abstract val dao: FavoriteDao
     companion object{
+        private const val DATABASE_NAME = "favorites_db"
         fun getFavoriteDatabase(context: Context): FavoriteDatabase {
-            return Room.databaseBuilder(context, FavoriteDatabase::class.java, "favorites_db").build()
+            return Room.databaseBuilder(context, FavoriteDatabase::class.java, DATABASE_NAME).build()
         }
     }
 }

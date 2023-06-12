@@ -1,4 +1,4 @@
-package com.example.newsapp.view.ui.screens.search
+package com.example.newsapp.ui.search
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -25,14 +25,15 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.newsapp.R
 import com.example.newsapp.data.datastore.StoreFilters
 import com.example.newsapp.data.model.New
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.ui.theme.Roboto
 import com.example.newsapp.ui.favorites.FavoritesViewModel
-import com.example.newsapp.ui.search.SearchViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -45,13 +46,14 @@ fun SearchScreen(
 ) {
     val resultedList = searchViewModel.resultedList.collectAsLazyPagingItems()
     val uiState by searchViewModel.uiState.collectAsState()
+    val detailBasePath = stringResource(R.string.detail_base_path)
 
     val navigateToDetail = { webUrl: String ->
-        navController.navigate("detail/${Uri.encode(webUrl)}")
+        navController.navigate("${detailBasePath}${Uri.encode(webUrl)}")
     }
 
     NewsAppTheme {
-        SearchContent(
+        SearchScreenContent(
             uiState.query,
             searchViewModel::updateQuery,
             resultedList,
@@ -64,7 +66,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchContent(
+fun SearchScreenContent(
     query: String,
     updateQuery: (String) -> Unit,
     newsList: LazyPagingItems<New>?,
@@ -89,11 +91,11 @@ fun SearchContent(
                     navigateToDetail
                 )
             } else {
-                Message("Welcome! Do a search")
+                Message(stringResource(R.string.welcome_message))
             }
         }
         if (newsList == null) {
-            Message("Welcome! Do a search")
+            Message(stringResource(R.string.welcome_message))
         }
     }
 }
@@ -124,7 +126,9 @@ fun SearchNewBar(
     updateQuery: (String) -> Unit
 ) {
     val datastore: StoreFilters = koinInject()
-    val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
+    val defaultFilter = stringResource(R.string.default_filter)
+    val savedFilter =
+        datastore.getDatastoreFilter.collectAsState(initial = defaultFilter)
 
     var active by remember { mutableStateOf(false) }
 
@@ -137,7 +141,7 @@ fun SearchNewBar(
             },
             onSearch = {
                 if (it.isNotEmpty()) {
-                    searchNew(it, savedFilter.value ?: "Relevance")
+                    searchNew(it, savedFilter.value ?: defaultFilter)
                     active = false
                 }
             },
@@ -147,7 +151,7 @@ fun SearchNewBar(
             },
             placeholder = {
                 Text(
-                    text = "Search",
+                    text = stringResource(R.string.search_placeholder),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Light
                 )
@@ -155,21 +159,22 @@ fun SearchNewBar(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search icon"
+                    contentDescription = stringResource(R.string.search_content_description)
                 )
             },
             trailingIcon = {
                 if (active) {
+                    val emptyText = stringResource(R.string.empty_text)
                     Icon(
                         modifier = Modifier.clickable {
                             if (query.isNotEmpty()) {
-                                updateQuery("")
+                                updateQuery(emptyText)
                             } else {
                                 active = false
                             }
                         },
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close icon"
+                        contentDescription = stringResource(R.string.close_icon_content_description)
                     )
                 }
             }
@@ -181,9 +186,14 @@ fun SearchNewBar(
 fun Filters(query: String, searchNew: (String, String) -> Unit) {
     val scope = rememberCoroutineScope()
     val datastore: StoreFilters = koinInject()
-    val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
-    val filtersList = listOf("Relevance", "Newest", "Oldest")
-    var selected = savedFilter.value ?: "Relevance"
+    val savedFilter =
+        datastore.getDatastoreFilter.collectAsState(initial = stringResource(R.string.default_filter))
+    val filtersList = listOf(
+        stringResource(R.string.default_filter),
+        stringResource(R.string.newest_filter),
+        stringResource(R.string.oldest_filter)
+    )
+    var selected = savedFilter.value ?: stringResource(R.string.default_filter)
 
     Row(
         modifier = Modifier
@@ -233,7 +243,7 @@ fun FilterChip(title: String, selected: String, onSelected: (String) -> Unit) {
             AnimatedVisibility(visible = isSelected) {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = "check",
+                    contentDescription = stringResource(R.string.check_icon_content_decription),
                     tint = Color.White
                 )
             }
@@ -367,7 +377,7 @@ fun FavoritesButton(
         val tint = if (isFavorite) Color.Red else Color.Gray
         Icon(
             imageVector = icon,
-            contentDescription = "Favorite Icon",
+            contentDescription = stringResource(R.string.favorite_icon_content_description),
             tint = tint
         )
     }
@@ -376,10 +386,10 @@ fun FavoritesButton(
 
 @Preview
 @Composable
-fun SearchPreview() {
+fun SearchScreenPreview() {
     NewsAppTheme {
-        SearchContent(
-            query = "",
+        SearchScreenContent(
+            query = stringResource(R.string.empty_text),
             updateQuery = {},
             newsList = null,
             searchNew = { _, _ -> },
