@@ -25,7 +25,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import androidx.compose.material.icons.filled.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.newsapp.service.data.datastore.StoreFilters
@@ -36,6 +35,7 @@ import com.example.newsapp.viewmodel.FavoritesViewModel
 import com.example.newsapp.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SearchScreen(
@@ -123,8 +123,7 @@ fun SearchNewBar(
     query: String,
     updateQuery: (String) -> Unit
 ) {
-    val context = LocalContext.current
-    val datastore = StoreFilters(context)
+    val datastore: StoreFilters = koinInject()
     val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
 
     var active by remember { mutableStateOf(false) }
@@ -180,9 +179,8 @@ fun SearchNewBar(
 
 @Composable
 fun Filters(query: String, searchNew: (String, String) -> Unit) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val datastore = StoreFilters(context)
+    val datastore: StoreFilters = koinInject()
     val savedFilter = datastore.getDatastoreFilter.collectAsState(initial = "Relevance")
     val filtersList = listOf("Relevance", "Newest", "Oldest")
     var selected = savedFilter.value ?: "Relevance"
